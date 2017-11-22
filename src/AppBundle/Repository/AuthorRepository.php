@@ -10,4 +10,36 @@ namespace AppBundle\Repository;
  */
 class AuthorRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findAuthorByName(Request $request)
+    {
+        $result = [];
+        $qb = $this->createQueryBuilder('article');
+        $q = $request->query->get('q');
+        $q_date = $request->query->get('q_date');
+
+        if ($q_date) {
+            $q_date = date_create_from_format('Y-m-d', $q_date);
+        }
+
+        if ($q && !$q_date) {
+            $qb
+                ->where('author.firstname = :firstname')
+                ->setParameter(':firstname', $q);
+            $result = $qb->getQuery()->getResult();
+        } elseif ($q_date && !$q) {
+            $qb
+                ->where('author.birthday = :birthday')
+                ->setParameter(':birthday', $q_date);
+            $result = $qb->getQuery()->getResult();
+        } elseif ($q_date && $q) {
+            $qb
+                ->where('author.birthday = :birthday')
+                ->andWhere('author.firstname = :firstname')
+                ->setParameter(':birthday', $q_date)
+                ->setParameter(':firstname', $q);
+            $result = $qb->getQuery()->getResult();
+        }
+
+        return $result;
+    }
 }
