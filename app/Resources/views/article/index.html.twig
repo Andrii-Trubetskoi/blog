@@ -5,12 +5,12 @@
 
     <table>
         <thead>
-            <tr>
-                <th>Id</th>
-                <th>Title</th>
-                <th>Text</th>
-                <th>Actions</th>
-            </tr>
+        <tr>
+            <th>Id</th>
+            <th>Title</th>
+            <th>Text</th>
+            <th>Actions</th>
+        </tr>
         </thead>
         <tbody>
         {% for article in articles %}
@@ -38,4 +38,30 @@
             <a href="{{ path('articles_new') }}">Create a new article</a>
         </li>
     </ul>
+
+    <h1>Search</h1>
+    <form action="{{ path('articles_index') }}">
+        <input placeholder="tag search" name="q_tag" type="text">
+        <input placeholder="title" name="q_title" type="text">
+        <button>submit</button>
+    </form>
+    <table>
+        <thead>
+        <tr>
+            <th>title</th>
+            <th>text</th>
+            <th>button</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        {% for result in results %}
+            <tr>
+                <td>{{ result.title }}</td>
+                <td>{{ result.text }}</td>
+                <td><a href="{{ path('articles_show', { 'id': result.id }) }}">show</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

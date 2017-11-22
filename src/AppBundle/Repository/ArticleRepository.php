@@ -30,4 +30,35 @@ class ArticleRepository extends \Doctrine\ORM\EntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function findArticlesByTag(Request $request)
+    {
+        $result = [];
+        $qb = $this->createQueryBuilder('article');
+        $tag = $request->query->get('q_tag');
+        $title = $request->query->get('q_title');
+
+        if ($tag && !$title) {
+            $qb
+                ->leftJoin('article.tags', 'tag')
+                ->where('tag.name = :tag')
+                ->setParameter(':tag', $tag);
+            $result = $qb->getQuery()->getResult();
+        } elseif ($title && !$tag) {
+            $qb
+                ->where('article.title = :title')
+                ->setParameter(':title', $title);
+            $result = $qb->getQuery()->getResult();
+        } elseif ($title && $tag) {
+            $qb
+                ->leftJoin('article.tags', 'tag')
+                ->where('tag.name = :tag')
+                ->andWhere('article.title = :title')
+                ->setParameter(':tag', $tag)
+                ->setParameter(':title', $title);
+            $result = $qb->getQuery()->getResult();
+        }
+
+        return $result;
+    }
 }

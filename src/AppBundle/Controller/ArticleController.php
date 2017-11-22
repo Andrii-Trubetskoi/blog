@@ -19,10 +19,17 @@ class ArticleController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
+        $q_title = $request->query->get('q_title');
+        $q_tag = $request->query->get('q_tag');
+
+        $results = [];
         $articles = $em->getRepository('AppBundle:Article')->findArticlesByRequest($request);
+
+        $results = $em->getRepository('AppBundle:Article')->findArticlesByTag($request);
 
         return $this->render('article/index.html.twig', array(
             'articles' => $articles,
+            'results' => $results
         ));
     }
 
@@ -113,7 +120,6 @@ class ArticleController extends Controller
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('articles_delete', array('id' => $article->getId())))
             ->setMethod('DELETE')
-            ->getForm()
-        ;
+            ->getForm();
     }
 }
