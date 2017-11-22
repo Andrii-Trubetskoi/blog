@@ -17,12 +17,33 @@ class AuthorController extends Controller
      */
     public function indexAction(Request $request)
     {
+        $q = $request->query->get('q');
+        $q_date = $request->query->get('q_date');
+        $birthday = null;
+
+        if ($q_date) {
+            $birthday = date_create_from_format('Y-m-d', $q_date);
+        }
+
+
         $em = $this->getDoctrine()->getManager();
+
+        if ($q && !$q_date) {
+            $results = $em->getRepository(Author::class)->findBy(['firstname' => $q]);
+        } elseif (!$q && $q_date) {
+            $results = $em->getRepository(Author::class)->findBy(['birthday' => $birthday]);
+        } elseif ($q && $q_date) {
+            $results = $em->getRepository(Author::class)->findBy(['birthday' => $birthday, 'firstname' => $q]);
+        } else {
+            $results = [];
+        }
+
 
         $authors = $em->getRepository(Author::class)->findAll();
 
         return $this->render('author/index.html.twig', array(
-            'authors' => $authors
+            'authors' => $authors,
+            'results' => $results
         ));
     }
 
@@ -36,8 +57,7 @@ class AuthorController extends Controller
             ->add('firstname')
             ->add('surname')
             ->add('birthday')
-            ->getForm()
-        ;
+            ->getForm();
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

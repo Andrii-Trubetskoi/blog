@@ -6,10 +6,9 @@
     <table>
         <thead>
         <tr>
-            <th>Id</th>
-            <th>Title</th>
-            <th>Text</th>
-            <th>Actions</th>
+            <th>firstname</th>
+            <th>surname</th>
+            <th>birthday</th>
         </tr>
         </thead>
         <tbody>
@@ -22,4 +21,30 @@
         {% endfor %}
         </tbody>
     </table>
+    <h1>Search</h1>
+    <form action="{{ path('autors_index') }}">
+        <input name="q" type="text">
+        <input name="q_date" type="date">
+        <button>submit</button>
+    </form>
+    <table>
+        <thead>
+        <tr>
+            <th>firstname</th>
+            <th>surname</th>
+            <th>birthday</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        {% for result in results %}
+            <tr>
+                <td>{{ result.firstname }}</td>
+                <td>{{ result.surname }}</td>
+                <td>{{ result.birthday|date }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
 {% endblock %}
